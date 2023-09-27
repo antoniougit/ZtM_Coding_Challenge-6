@@ -1,33 +1,36 @@
+// Question 1: Clean the room function: given an input of [1,2,4,591,392,391,2,5,10,2,1,1,1,20,20], make a function that organizes these into individual array that is ordered. For example answer(ArrayFromAbove) should return: [[1,1,1,1],[2,2,2], 4,5,10,[20,20], 391, 392,591]. Bonus: Make it so it organizes strings differently from number types. i.e. [1, "2", "3", 2] should return [[1,2], ["2", "3"]]
+
 const inputArray = [1, 2, 4, 591, 392, 391, 2, 5, 10, 2, 1, 1, 1, 20, 20];
 
-const orderArray = (arr) => {
-    // sort array by numerical order
-    const result = arr.sort((a, b) => a - b);
-    return result;
-};
-
 const organizeArray = (arr) => {
-    const countMap = {};
-    const result = [];
+    arr.sort((a, b) => a - b); // sort the input array in numerical order
 
-    for (const item of arr) {
-        if (countMap[item] === undefined) {
-            // if it's the first occurrence of the item, add it to the result array
-            result.push(item);
-            countMap[item] = result.length - 1;
+    const result = [];
+    let currentGroup = [arr[0]];
+
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] === arr[i - 1]) {
+            // if the current element is equal to the previous one, push it to the current group
+            currentGroup.push(arr[i]);
         } else {
-            // if it's a duplicate, check if it's already in a subarray, and if not, create one
-            if (!Array.isArray(result[countMap[item]])) {
-                result[countMap[item]] = [item];
-            }
-            // push the duplicate value into the existing subarray
-            result[countMap[item]].push(item);
+            // if it's different, finalize the current group (either as a single value or an array)
+            result.push(
+                currentGroup.length === 1
+                    ? currentGroup[0]
+                    : currentGroup.slice()
+            );
+            currentGroup = [arr[i]]; // Start a new group
         }
     }
+
+    // push the last group
+    result.push(
+        currentGroup.length === 1 ? currentGroup[0] : currentGroup.slice()
+    );
+
     return result;
 };
 
-const orderedArray = orderArray(inputArray);
-const organizedArray = organizeArray(orderedArray);
+const organizedArray = organizeArray(inputArray);
 
 console.log(organizedArray);
